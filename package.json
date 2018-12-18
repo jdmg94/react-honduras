@@ -1,0 +1,39 @@
+{
+  "name": "react-honduras",
+  "version": "1.0.0",
+  "description": "A scalable map of Honduras react component",
+  "main": "dist/bundle.js",
+  "homepage": "https://jdmg94.github.io/react-honduras",
+  "repository": "https://github.com/jdmg94/react-honduras.git",
+  "author": "José Muñoz <jdmg93@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "clean:demo": "rm -rf ./example/dist",
+    "deploy": "gh-pages -d ./example/dist",
+    "start": "parcel watch ./lib/index.jsx --out-dir ./dist",
+    "start:demo": "parcel ./example/src/index.html --out-dir ./example/dist",
+    "build": "parcel build ./lib/index.jsx --global react-honduras",
+    "build:demo": "parcel build ./example/src/index.html --out-dir ./example/dist --public-url /",
+    "sourcemap": "source-map-explorer --html ./dist/index.js ./dist/index.map > source-map.html",
+    "dev": "yarn start && yarn start:demo"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "babel-plugin-lodash": "^3.3.4",
+    "gh-pages": "^2.0.1",
+    "parcel-bundler": "^1.10.3",
+    "source-map-explorer": "^1.6.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0-alpha.2",
+    "react-dom": "^16.7.0-alpha.2",
+    "react-spring": "^7.1.3",
+    "retoggle": "^0.2.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.84.0"
+  }
+}
