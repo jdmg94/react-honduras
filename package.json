@@ -2,7 +2,7 @@
   "name": "react-honduras",
   "version": "1.0.0",
   "description": "A scalable map of Honduras react component",
-  "main": "dist/bundle.js",
+  "main": "dist/index.js",
   "homepage": "https://jdmg94.github.io/react-honduras",
   "repository": "https://github.com/jdmg94/react-honduras.git",
   "author": "José Muñoz <jdmg93@gmail.com>",
@@ -11,13 +11,13 @@
   "scripts": {
     "clean": "rm -rf ./dist",
     "clean:demo": "rm -rf ./example/dist",
-    "deploy": "gh-pages -d ./example/dist",
     "start": "parcel watch ./lib/index.jsx --out-dir ./dist",
     "start:demo": "parcel ./example/src/index.html --out-dir ./example/dist",
     "build": "parcel build ./lib/index.jsx --global react-honduras",
-    "build:demo": "parcel build ./example/src/index.html --out-dir ./example/dist --public-url /",
-    "sourcemap": "source-map-explorer --html ./dist/index.js ./dist/index.map > source-map.html",
-    "dev": "yarn start && yarn start:demo"
+    "build:demo": "parcel build ./example/src/index.html --out-dir ./example/dist --public-url ./",
+    "deploy": "gh-pages -d ./example/dist",
+    "dev": "yarn start && yarn start:demo",
+    "sourcemap": "source-map-explorer --html ./dist/index.js ./dist/index.map > source-map.html"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

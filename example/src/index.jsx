@@ -6,8 +6,8 @@
  */
 import Honduras from '../../lib';
 import { hydrate } from 'react-dom';
-import { Spring } from 'react-spring';
 import React, { Fragment } from 'react';
+import { useSpring, animated, config } from 'react-spring/hooks';
 import { Inspector, useRangeKnob, useColorKnob } from 'retoggle';
 import { Layout, Grid, Menu, Header, Message, Icon } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
@@ -24,6 +24,17 @@ const fadeUpAndIn = {
   }
 };
 
+const fadeDownAndIn = {
+  result: {
+    opacity: 1,
+    transform: 'translateY(0)',
+  },
+  initial: {
+    opacity: 0,
+    transform: 'translateY(-10rem)',
+  }
+};
+
 const AnimatedMap = () => {
   const [fill] = useColorKnob('fill', 'rgba(54, 249, 255, 0.2)');
   const [stroke] = useColorKnob('stroke', '#2160CC');
@@ -35,60 +46,87 @@ const AnimatedMap = () => {
     max: 1500,
   });
 
+  const animation = useSpring({
+    ...fadeUpAndIn.result,
+    from: fadeUpAndIn.initial,
+    native: true,
+    config: config.molasses,
+  })
+
   return (
-    <Spring
-      from={fadeUpAndIn.initial}
-      to={fadeUpAndIn.result}
-    >
-      {
-        animation => (
-          <Honduras
-            size={size}
-            fill={fill}
-            stroke={stroke}
-            style={animation}
-            onClick={({ target }) => {
+    <animated.div style={animation}>
+      <Honduras
+        size={size}
+        fill={fill}
+        stroke={stroke}
+        onClick={({ target }) => {
 
-              alert(target.attributes.name.value);
-            }}
-            onMouseOver={({ target }) => {
-              const { attributes } = target;
+          alert(target.attributes.name.value);
+        }}
+        onMouseOver={({ target }) => {
+          const { attributes } = target;
 
-              attributes.stroke.value = strokeOnHover;
-              attributes.fill.value = fillOnHover;
-            }}
+          attributes.stroke.value = strokeOnHover;
+          attributes.fill.value = fillOnHover;
+        }}
 
-            onMouseLeave={({ target }) => {
-              const { attributes } = target;
+        onMouseLeave={({ target }) => {
+          const { attributes } = target;
 
-              attributes.stroke.value = stroke;
-              attributes.fill.value = fill;
-            }}
-          />
-        )
-      }
-    </Spring>
+          attributes.stroke.value = stroke;
+          attributes.fill.value = fill;
+        }}
+      />
+    </animated.div>
   );
 };
 
-const AnimatedMessage = () => (
-  <Spring
-    from={{ opacity: 0 }}
-    to={{ opacity: 1 }}
-  >
-  {
-    animation => (
+const AnimatedTitle = () => {
+  const animation = useSpring({
+    native: true,
+    transform: 'scale(1)',
+    from: {
+      transform: 'scale(4)',
+    }
+  });
+
+  return (
+    <animated.div
+      style={animation}
+    >
+      <Header
+        as="h1"
+        size="huge"
+      >
+        Hello
+        {' '}
+        from
+        {' '}
+        Honduras!
+      </Header>
+    </animated.div>
+  );
+};
+
+const AnimatedMessage = () => {
+  const animation = useSpring({
+    native: true,
+    config: config.slow,
+    ...fadeDownAndIn.result,
+    from: fadeDownAndIn.initial,
+  });
+
+  return (
+    <animated.div style={animation}>
       <Message
         size="huge"
         color="blue"
-        style={animation}
       >
-      React-Honduras is an SVG map of the country of Honduras, built using React JS
+        React-Honduras is an SVG map of the country of Honduras, built using React JS
       </Message>
-    )
-  }
-  </Spring>
-);
+    </animated.div>
+  );
+};
 
 const Navigation = () => (
   <Menu
@@ -136,16 +174,7 @@ const Demo = () => (
         <Inspector />
       </Row>
       <Row centered>
-        <Header
-          as="h1"
-          size="huge"
-        >
-          Hello
-          {' '}
-          from
-          {' '}
-          Honduras!
-        </Header>
+        <AnimatedTitle />
       </Row>
       <Row centered>
         <AnimatedMessage />
