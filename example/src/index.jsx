@@ -13,24 +13,33 @@ import { Layout, Grid, Menu, Header, Message, Icon } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 
 const { Row, Column } = Grid;
-const fadeUpAndIn = {
+const fadeIn = {
+  initial: {
+    opacity: 0,
+  },
   result: {
     opacity: 1,
+  }
+};
+
+const fadeUpAndIn = {
+  result: {
+    ...fadeIn.result,
     transform: 'translateY(0)',
   },
   initial: {
-    opacity: 0,
+    ...fadeIn.initial,
     transform: 'translateY(10rem)',
   }
 };
 
 const fadeDownAndIn = {
   result: {
-    opacity: 1,
+    ...fadeIn.result,
     transform: 'translateY(0)',
   },
   initial: {
-    opacity: 0,
+    ...fadeIn.initial,
     transform: 'translateY(-10rem)',
   }
 };
@@ -43,15 +52,22 @@ const AnimatedMap = () => {
   const [size] = useRangeKnob('size', {
     initialValue: 600,
     min: 50,
-    max: 1500,
+    max: 5000,
   });
 
   const animation = useSpring({
-    ...fadeUpAndIn.result,
-    from: fadeUpAndIn.initial,
     native: true,
+    ...fadeUpAndIn.result,
     config: config.molasses,
-  })
+    from: fadeUpAndIn.initial,
+  });
+
+  const replaceStrokeAndFill = newValues => ({
+    target: { attributes }
+  }) => {
+    attributes.fill.value = newValues.fill;
+    attributes.stroke.value = newValues.stroke;
+  };
 
   return (
     <animated.div style={animation}>
@@ -63,19 +79,15 @@ const AnimatedMap = () => {
 
           alert(target.attributes.name.value);
         }}
-        onMouseOver={({ target }) => {
-          const { attributes } = target;
+        onMouseOver={replaceStrokeAndFill({
+          fill: fillOnHover,
+          stroke: strokeOnHover,
+        })}
 
-          attributes.stroke.value = strokeOnHover;
-          attributes.fill.value = fillOnHover;
-        }}
-
-        onMouseLeave={({ target }) => {
-          const { attributes } = target;
-
-          attributes.stroke.value = stroke;
-          attributes.fill.value = fill;
-        }}
+        onMouseLeave={replaceStrokeAndFill({
+          fill,
+          stroke,
+        })}
       />
     </animated.div>
   );
@@ -128,57 +140,72 @@ const AnimatedMessage = () => {
   );
 };
 
-const Navigation = () => (
-  <Menu
-    pointing
-    secondary
-    color="blue"
-  >
-    <Menu.Menu
-      icon="labeled"
-      position="left"
-    >
-      <Menu.Item active>
-        Demo
-      </Menu.Item>
+const Navigation = () => {
+  const animation = useSpring({
+    native: true,
+    ...fadeIn.result,
+    config: config.slow,
+    from: fadeIn.initial,
+  });
 
-      <Menu.Item
-        as="a"
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://github.com/jdmg94/react-honduras"
+  return (
+    <animated.div style={animation}>
+      <Menu
+        pointing
+        secondary
+        color="blue"
       >
-        <Icon
-          name="github"
-        />
-        Repo
-      </Menu.Item>
-    </Menu.Menu>
-  </Menu>
-)
+        <Menu.Menu
+          icon="labeled"
+          position="left"
+        >
+          <Menu.Item active>
+            Demo
+          </Menu.Item>
+
+          <Menu.Item
+            as="a"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/jdmg94/react-honduras"
+          >
+            <Icon
+              name="github"
+            />
+            Repo
+          </Menu.Item>
+        </Menu.Menu>
+      </Menu>
+    </animated.div>
+  );
+};
+
+const RowItem = ({ children }) => (
+  <Row centered>
+    <Column
+      mobile={16}
+      computer={10}
+      textAlign="center"
+    >
+    {children}
+    </Column>
+  </Row>
+);
 
 const Demo = () => (
   <Fragment>
     <Navigation />
+    <Inspector />
     <Grid>
-      <Row centered>
-        <Column
-          mobile={16}
-          computer={10}
-          textAlign="center"
-        >
-          <AnimatedMap />
-        </Column>
-      </Row>
-      <Row>
-        <Inspector />
-      </Row>
-      <Row centered>
+      <RowItem>
+        <AnimatedMap />
+      </RowItem>
+      <RowItem>
         <AnimatedTitle />
-      </Row>
-      <Row centered>
+      </RowItem>
+      <RowItem>
         <AnimatedMessage />
-      </Row>
+      </RowItem>
     </Grid>
   </Fragment>
 );
